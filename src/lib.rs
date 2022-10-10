@@ -120,7 +120,6 @@ pub fn tar_foreach<R: Read, F: FnMut(&str, usize, &str)>(
     let mut buffer = [0; BLOCK_SIZE];
     loop {
         input.read_exact(&mut buffer)?;
-        //println!("{:02X?}", buffer);
         let h = Header::new(&buffer)?;
         use FileType::*;
         match h.filetype {
