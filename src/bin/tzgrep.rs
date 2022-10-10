@@ -9,14 +9,18 @@ use tzgrep::tar_foreach;
 fn tar_grep<R: Read>(regex: Regex, input: R, line_number: bool) -> anyhow::Result<()> {
     if line_number {
         tar_foreach(input, &mut |filename, line_num, line| {
+            let line = line.trim_end_matches('\n');
+            let line = line.trim_end_matches('\r');
             if regex.is_match(line) {
-                print!("{filename}:{line_num}:{line}");
+                println!("{filename}:{line_num}:{line}");
             }
         })?
     } else {
         tar_foreach(input, &mut |filename, _, line| {
+            let line = line.trim_end_matches('\n');
+            let line = line.trim_end_matches('\r');
             if regex.is_match(line) {
-                print!("{filename}:{line}");
+                println!("{filename}:{line}");
             }
         })?
     }

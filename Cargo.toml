@@ -5,7 +5,6 @@ edition = "2021"
 authors = ["Toru3 <ryuutet@gmail.com>"]
 description = "grep tar.gz"
 license = "AGPL-3.0-or-later"
-documentation = "https://docs.rs/tzgrep/"
 repository = "https://gitlab.com/Toru3/tzgrep"
 keywords = ["grep", "tar"]
 categories = ["command-line-utilities", "text-processing"]
