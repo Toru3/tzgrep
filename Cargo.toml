@@ -1,0 +1,21 @@
+[package]
+name = "tzgrep"
+version = "0.1.0"
+edition = "2021"
+authors = ["Toru3 <ryuutet@gmail.com>"]
+description = "grep tar.gz"
+license = "AGPL-3.0-or-later"
+repository = "https://gitlab.com/Toru3/tzgrep"
+keywords = ["grep", "tar"]
+categories = ["command-line-utilities", "text-processing"]
+
+[dependencies]
+anyhow = "1.0.65"
+bzip2 = "0.4.3"
+clap = { version = "4.0.11", features = ["derive"] }
+flate2 = "1.0.24"
+itertools = "0.10.5"
+regex = "1.6.0"
+thiserror = "1.0.37"
+xz = "0.1.0"
+zstd = "0.11.2"

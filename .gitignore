@@ -1,0 +1,7 @@
+/target
+/test_data
+*.tar
+*.gz
+*.bz2
+*.xz
+*.zst
