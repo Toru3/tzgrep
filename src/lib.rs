@@ -82,7 +82,11 @@ fn num_blocks(size: usize) -> usize {
     (size + BLOCK_SIZE - 1) / BLOCK_SIZE
 }
 
-fn foreach_line<R: BufRead, F: FnMut(&str, usize, &str)>(filename: &str, mut input: R, func: &mut F) {
+fn foreach_line<R: BufRead, F: FnMut(&str, usize, &str)>(
+    filename: &str,
+    mut input: R,
+    func: &mut F,
+) {
     let mut line = String::new();
     for line_number in 1.. {
         let r = input.read_line(&mut line);
