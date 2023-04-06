@@ -27,14 +27,14 @@ sys	0m0.168s
 $ tzgrep --help
 grep tar.gz
 
-Usage: tzgrep [OPTIONS] <REGEX> [FILE]
+Usage: tzgrep [OPTIONS] <PATTERN> [FILE]
 
 Arguments:
-  <REGEX>
-          serch pattern
+  <PATTERN>
+          search pattern [regular expression](https://crates.io/crates/regex)
 
   [FILE]
-          serch target. If not presented read from stdin.
+          search target. If not presented read from stdin.
           
           .tar, .tar.gz, .tar.bz2, .tar.xz, .tar.zst are supported
 
@@ -42,10 +42,13 @@ Options:
   -n, --line-number
           print line number with output lines
 
+  -F, --fixed-string
+          Asuume search pattern to be fixed string
+
   -h, --help
-          Print help information (use `-h` for a summary)
+          Print help (see a summary with '-h')
 
   -V, --version
-          Print version information
+          Print version
 ```
 
