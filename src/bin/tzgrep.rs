@@ -6,7 +6,27 @@ use std::io::{BufReader, Read};
 use std::path::PathBuf;
 use tzgrep::tar_foreach;
 
-fn tar_grep<R: Read>(regex: Regex, input: R, line_number: bool) -> anyhow::Result<()> {
+enum Pattern {
+    Regex(Regex),
+    FixedStrings(String),
+}
+impl Pattern {
+    fn new(pattern: String, is_fixed_string: bool) -> Result<Self, regex::Error> {
+        if is_fixed_string {
+            Ok(Self::FixedStrings(pattern))
+        } else {
+            Ok(Self::Regex(Regex::new(&pattern)?))
+        }
+    }
+    fn is_match(&self, text: &str) -> bool {
+        match &self {
+            Self::Regex(x) => x.is_match(text),
+            Self::FixedStrings(x) => x == text,
+        }
+    }
+}
+
+fn tar_grep<R: Read>(regex: Pattern, input: R, line_number: bool) -> anyhow::Result<()> {
     if line_number {
         tar_foreach(input, &mut |filename, line_num, line| {
             let line = line.trim_end_matches('\n');
@@ -30,22 +50,26 @@ fn tar_grep<R: Read>(regex: Regex, input: R, line_number: bool) -> anyhow::Resul
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
-    /// serch pattern
-    regex: Regex,
-    /// serch target. If not presented read from stdin.
+    /// search pattern [regular expression](https://crates.io/crates/regex)
+    pattern: String,
+    /// search target. If not presented read from stdin.
     ///
     /// .tar, .tar.gz, .tar.bz2, .tar.xz, .tar.zst are supported
     file: Option<PathBuf>,
     /// print line number with output lines
     #[arg(short = 'n', long)]
     line_number: bool,
+    /// Asuume search pattern to be fixed string.
+    #[arg(short = 'F', long)]
+    fixed_string: bool,
 }
 
 fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
+    let pattern = Pattern::new(cli.pattern, cli.fixed_string)?;
     macro_rules! f {
         ($input:expr) => {
-            tar_grep(cli.regex, $input, cli.line_number)
+            tar_grep(pattern, $input, cli.line_number)
         };
     }
     if let Some(file) = cli.file {
