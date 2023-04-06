@@ -1,6 +1,6 @@
 [package]
 name = "tzgrep"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["Toru3 <ryuutet@gmail.com>"]
 description = "grep tar.gz"
