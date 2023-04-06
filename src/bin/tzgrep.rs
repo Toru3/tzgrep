@@ -21,7 +21,7 @@ impl Pattern {
     fn is_match(&self, text: &str) -> bool {
         match &self {
             Self::Regex(x) => x.is_match(text),
-            Self::FixedStrings(x) => x == text,
+            Self::FixedStrings(x) => text.contains(x),
         }
     }
 }
