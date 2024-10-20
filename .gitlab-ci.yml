@@ -40,18 +40,9 @@ test:
         - "1.74.1" # MSRV
         USE_MINIMAL_VERSIONS:
         - "false"
-        # - "true" # xz is broken
-        FEATURES:
-        - "--all-features"
-      - RUST_VERSION:
-        - "stable"
-        - "beta"
-        - "1.74.1" # MSRV
-        USE_MINIMAL_VERSIONS:
-        - "false"
         - "true"
         FEATURES:
-        - "--no-default-features --features flate2,bzip2,zstd"
+        - "--all-features"
       - RUST_VERSION:
         - "stable"
         USE_MINIMAL_VERSIONS:
