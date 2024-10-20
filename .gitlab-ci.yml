@@ -1,27 +1,56 @@
-image: "rust:latest"
+image: "toru3/rust:latest"
 
-.run_test: &run_test
+test:
+  stage: test
   script:
-    - rustup update
-    - rustup component add rustfmt clippy
-    - rustup --version && rustc --version && cargo --version
-    - cargo fmt --all --check --verbose
-    - cargo clippy --workspace --all-targets --all-features --verbose -- -D warnings
-    - cargo test --workspace --all-targets --all-features --verbose
+    # キャッシュの設定
+    - if [ "${DISABLE_CACHE:-false}" = "false" ]; then
+    -     export CARGO_HOME="$CI_PROJECT_DIR/cargo"
+    -     mkdir -p "$CARGO_HOME"
+    -     ln -s /usr/local/cargo/bin $CARGO_HOME/bin
+    -     ln -s /usr/local/cargo/env $CARGO_HOME/env
+    - fi
+    # ツールのインストール
+    - rustup default "$RUST_VERSION"
+    # 現在のversionの表示
+    - rustup --version && cargo --version
+    # Cargo.lock の更新
+    - if [ "${USE_MINIMAL_VERSIONS:-false}" = "false" ]; then
+    -     time cargo +nightly update
+    - else
+    -     time cargo +nightly update -Z minimal-versions
+    - fi
+    - cargo fetch # ソースコードのダウンロード
+    - cargo fmt --all -- --check --verbose # フォーマットチェック
+    - cargo clippy --workspace --all-targets $FEATURES -- -D warnings
+    - cargo test --workspace $FEATURES
   cache:
-    key:
-      files:
-        - Cargo.lock
-    paths:
-      - target/
-
-# Use cargo to test the project
-test:stable:
-  <<: *run_test
-  before_script:
-    - rustup default stable
-
-test:beta:
-  <<: *run_test
-  before_script:
-    - rustup default beta
+    - key: "crates-$USE_MINIMAL_VERSIONS"
+      paths:
+        - cargo/registry/index/
+        - cargo/registry/cache/
+        - cargo/git/db/
+  variables:
+    CARGO_UNSTABLE_SPARSE_REGISTRY: "true"
+  parallel:
+    matrix:
+      - RUST_VERSION:
+        - "stable"
+        - "beta"
+        - "1.74.1" # MSRV
+        USE_MINIMAL_VERSIONS:
+        - "false"
+        # - "true" # xz is broken
+        FEATURES:
+        - "--all-features"
+      - RUST_VERSION:
+        - "stable"
+        USE_MINIMAL_VERSIONS:
+        - "false"
+        FEATURES:
+        - "--all-features"
+        - "--no-default-features --features flate2"
+        - "--no-default-features --features bzip2"
+        - "--no-default-features --features xz"
+        - "--no-default-features --features zstd"
+        - "--no-default-features"

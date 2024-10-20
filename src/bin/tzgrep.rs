@@ -83,15 +83,19 @@ fn main() -> anyhow::Result<()> {
         match file.extension() {
             None => Err(anyhow!("there is no extension")),
             Some(ext) if ext == "tar" => f!(fd),
+            #[cfg(feature = "flate2")]
             Some(ext) if ext == "gz" || ext == "tgz" => {
                 f!(flate2::bufread::GzDecoder::new(fd))
             }
+            #[cfg(feature = "bzip2")]
             Some(ext) if ext == "bz2" || ext == "tbz" => {
                 f!(bzip2::bufread::BzDecoder::new(fd))
             }
+            #[cfg(feature = "xz")]
             Some(ext) if ext == "xz" || ext == "txz" => {
                 f!(xz::bufread::XzDecoder::new(fd))
             }
+            #[cfg(feature = "zstd")]
             Some(ext) if ext == "zst" || ext == "tzst" => {
                 f!(zstd::stream::read::Decoder::new(fd)?)
             }
