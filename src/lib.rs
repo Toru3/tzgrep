@@ -79,7 +79,7 @@ impl<'a> Header<'a> {
 }
 
 fn num_blocks(size: usize) -> usize {
-    (size + BLOCK_SIZE - 1) / BLOCK_SIZE
+    size.div_ceil(BLOCK_SIZE)
 }
 
 fn foreach_line<R: BufRead, F: FnMut(&str, usize, &str)>(
