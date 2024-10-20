@@ -91,9 +91,16 @@ fn main() -> anyhow::Result<()> {
             Some(ext) if ext == "bz2" || ext == "tbz" => {
                 f!(bzip2::bufread::BzDecoder::new(fd))
             }
-            #[cfg(feature = "xz")]
+            #[cfg(feature = "lzma-rs")]
             Some(ext) if ext == "xz" || ext == "txz" => {
-                f!(xz::bufread::XzDecoder::new(fd))
+                let (reader, mut writer) = os_pipe::pipe()?;
+                std::thread::scope(|s| {
+                    s.spawn(|| {
+                        let mut fd = fd;
+                        lzma_rs::xz_decompress(&mut fd, &mut writer).unwrap();
+                    });
+                    f!(reader)
+                })
             }
             #[cfg(feature = "zstd")]
             Some(ext) if ext == "zst" || ext == "tzst" => {

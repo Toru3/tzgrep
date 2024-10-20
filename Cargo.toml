@@ -16,14 +16,17 @@ bzip2 = { version = "0.4.4", optional = true }
 clap = { version = "4.2.1", features = ["derive"] }
 flate2 = { version = "1.0.25", optional = true }
 itertools = "0.10.5"
+lzma-rs = { version = "0.3.0", optional = true }
+os_pipe = { version = "1.2.1", optional = true }
 regex = "1.7.3"
 thiserror = "1.0.40"
-xz = { version = "0.1.0", optional = true }
 zstd = { version = "0.12.3", optional = true }
 
 [features]
-xz = ["dep:xz"]
-zstd = ["dep:zstd"]
-bzip2 = ["dep:bzip2"]
-flate2 = ["dep:flate2"]
 default = ["flate2", "bzip2", "xz", "zstd"]
+flate2 = ["dep:flate2"]
+bzip2 = ["dep:bzip2"]
+os_pipe = ["dep:os_pipe"]
+lzma-rs = ["dep:lzma-rs"]
+xz = ["lzma-rs", "os_pipe"]
+zstd = ["dep:zstd"]
