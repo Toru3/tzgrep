@@ -55,7 +55,7 @@ impl<'a> Header<'a> {
             if c & 0xF8 != 0x30 {
                 return Err(TzgrepError::OctalError(*c));
             }
-            r = r << 3 | (c & 0x07) as u64;
+            r = (r << 3) | (c & 0x07) as u64;
         }
         Ok(r)
     }
